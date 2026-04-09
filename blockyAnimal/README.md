@@ -1,0 +1,3 @@
+I learned a lot through working this assignment, and definitely could have accomplished the 3d rendering more efficiently, but I'll be able to apply these new skills to the next project hopefully. I hand coded all of the body and joints myself, based on looking at the figure and trying to make it look pretty.
+
+I used the help of ChatGPT and Claude for figuring out the algorithm for creating dodecahedrons, as well as to learn about the math equations for animation logic. Everything else was mostly done using the help of the videos, and then hardcoded on my own for the actual body of my dragonfly!

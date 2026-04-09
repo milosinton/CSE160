@@ -1,0 +1,251 @@
+<!-- Milo Sinton
+     esinton@ucsc.edu
+     1946290
+
+     Notes to Graders:
+
+     - you can move around the world using the wasd keys, pan with q and e
+     - rotate the camera view using the mouse
+     - move up like flying in minecraft using space! (down is space+shift)
+     - place blocks by clicking/break with shift+click
+     - hit h to see all the commands!
+
+     - game is to try and hit the dragonfly, it spawns a pretty flower block if you do
+     - it flies around pretty quickly making it a bit difficult, and it avoids the preplaced blocks!
+
+     - I used my animal/animations from blockyAnimal
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Blocky World</title>
+
+    <style>
+      body {
+        margin: 0;
+        background: #000;
+        color: #ddd;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h1 {
+        margin: 20px 0 10px 0;
+        color: #f0f0f0;
+        letter-spacing: 1px;
+      }
+
+      #gameFrame {
+        position: relative;
+        width: min(70vmin, 640px);
+        height: min(70vmin, 640px);
+        margin-bottom: 16px;
+      }
+
+      /* Canvas fills the frame */
+      #webgl {
+        width: 100%;
+        height: 100%;
+        background: black;
+        border-radius: 12px;
+
+        box-shadow:
+          0 0 25px rgba(100, 150, 255, 0.15),
+          0 0 60px rgba(100, 150, 255, 0.05);
+
+        outline: none;
+        display: block;
+      }
+
+      #ui {
+  width: min(70vmin, 640px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  color: #9ad;
+  font-size: 14px;
+
+  margin-top: 6px;
+  padding-bottom: 20px;
+}
+
+
+      #performance {
+        color: #9ad;
+        margin-bottom: 12px;
+        font-size: 14px;
+      }
+
+      /* ===== Controls overlay (now INSIDE #gameFrame) ===== */
+      .overlay.hidden { display: none; }
+
+      .overlay {
+        position: absolute;
+        inset: 0;
+
+        background: rgba(0, 0, 0, 0.45); /* slightly transparent */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        z-index: 10;
+
+        /* padding shows some game around edges */
+        padding: 18px;
+        box-sizing: border-box;
+
+        /* match canvas rounding */
+        border-radius: 12px;
+      }
+
+      .overlay-card {
+  width: min(88%, 480px);
+  max-height: 85%;
+  overflow: hidden; /* remove scrolling */
+
+  background: rgba(20, 20, 20, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+
+  padding: 10px 12px; 
+  box-shadow: 0 0 30px rgba(100, 150, 255, 0.10);
+
+  font-size: 13px; /* globally shrink text */
+}
+
+      .overlay-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .overlay-header h2 {
+  font-size: 14px;
+}
+
+      .overlay-close {
+        background: transparent;
+        color: #bbb;
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 10px;
+        padding: 6px 10px;
+        cursor: pointer;
+      }
+
+      .overlay-close:hover {
+        color: #fff;
+        border-color: rgba(255,255,255,0.25);
+      }
+
+      .controls-grid {
+        display: grid;
+        grid-template-columns: 170px 1fr;
+        gap: 6px 10px;
+        align-items: center;
+      }
+
+      .key {
+  font-family: ui-monospace, monospace;
+  font-size: 12px;  
+  padding: 3px 8px; 
+  border-radius: 8px;
+}
+
+      .desc {
+  color: #cfcfcf;
+  font-size: 12px;
+}
+
+#helpHint {
+  opacity: 0.85;
+}
+
+#helpHint:hover {
+  opacity: 1;
+}
+
+#dragonHint {
+  margin-top: 8px; 
+  color: #cfeaff;             
+  font-size: 16px;             
+  letter-spacing: 0.8px;      
+  font-weight: 500;            
+  opacity: 0.95;
+  text-shadow: 0 0 6px rgba(120, 180, 255, 0.4);
+}
+
+#dragonHint:hover {
+  opacity: 1;
+}
+
+    </style>
+  </head>
+
+  <body onload="main()">
+    <h1>dragonfly world!</h1>
+    <div id="gameFrame">
+      <canvas id="webgl" width="700" height="700" tabindex="0">
+        Please use a browser that supports "canvas"
+      </canvas>
+
+      <!-- Controls Overlay -->
+      <div id="controlsOverlay" class="overlay hidden" role="dialog" aria-modal="true">
+        <div class="overlay-card">
+          <div class="overlay-header">
+            <h2>Game Controls</h2>
+            <button id="closeOverlayBtn" class="overlay-close" aria-label="Close controls">✕</button>
+          </div>
+
+          <div class="overlay-body">
+            <div class="controls-grid">
+              <div class="key">Mouse Move</div><div class="desc">Look around (pointer lock)</div>
+              <div class="key">Left Click</div><div class="desc">Add/place a block</div>
+              <div class="key">Shift + Left Click</div><div class="desc">Delete a block</div>
+
+              <div class="key">W</div><div class="desc">Move forward</div>
+              <div class="key">A</div><div class="desc">Move left</div>
+              <div class="key">S</div><div class="desc">Move backward</div>
+              <div class="key">D</div><div class="desc">Move right</div>
+
+              <div class="key">Space</div><div class="desc">Move up</div>
+              <div class="key">Shift + Space</div><div class="desc">Move down</div>
+
+              <div class="key">Q / E</div><div class="desc">Pan left / right</div>
+              <div class="key">Esc</div><div class="desc">Exit pointer lock</div>
+
+              <div class="key">H</div><div class="desc">Toggle help screen</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="ui">
+  <div>
+    <div id="performance">Performance info</div>
+    <div id="dragonHint">Click the dragonfly for a surprise!</div>
+  </div>
+  <div id="helpHint">Press H to view controls</div>
+</div>
+
+    <!-- ===== Scripts ===== -->
+    <script src="../lib/cuon-matrix-cse160.js"></script>
+    <script src="../lib/cuon-utils.js"></script>
+    <script src="../lib/webgl-utils.js"></script>
+    <script src="../lib/webgl-debug.js"></script>
+    <script src="Dodecahedron.js"></script>
+    <script src="Cube.js"></script>
+    <script src="Circle.js"></script>
+    <script src="Triangle.js"></script>
+    <script src="Point.js"></script>
+    <script src="Camera.js"></script>
+    <script src="BlockyWorld.js"></script>
+  </body>
+</html>

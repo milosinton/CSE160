@@ -1,0 +1,116 @@
+<!-- Milo Sinton
+     esinton@ucsc.edu
+     1946290
+
+     Notes to Graders:
+
+     - move around using WASD and jump with space
+     - Game is to collect all the floating objects! Collect them by walking into them. 
+     - Once all are collected, ladybug animation starts and a spotlight is placed above illluminating it
+     - The sky is made using an HDRI, and swaps to night once the game is won
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.183.2/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.183.2/examples/jsm/"
+      }
+    }
+    </script>
+
+    <meta charset="utf-8">
+    <title>Ladybug World</title>
+    <style>
+      html, body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      #c {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      #loading-screen {
+        position: fixed;
+        inset: 0;
+        background: #0b0b0b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        transition: opacity 0.5s ease;
+      }
+
+      #loading-screen.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .loading-wrap {
+        width: min(420px, 70vw);
+        text-align: center;
+        color: white;
+        font-family: system-ui, sans-serif;
+      }
+
+      .loading-label {
+        margin-bottom: 14px;
+        font-size: 18px;
+        letter-spacing: 0.04em;
+      }
+
+      .loading-track {
+        width: 100%;
+        height: 10px;
+        background: #222;
+        border-radius: 999px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .loading-bar {
+        width: 35%;
+        height: 100%;
+        background: linear-gradient(90deg, #5ec8ff, #b8f0ff);
+        border-radius: 999px;
+        position: absolute;
+        left: -35%;
+        animation: slide-bar 1s ease-in-out infinite;
+      }
+
+      @keyframes slide-bar {
+        0% { left: -35%; }
+        100% { left: 100%; }
+      }
+
+      .loading-percent {
+        margin-top: 12px;
+        font-size: 14px;
+        color: #b5b5b5;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading-screen">
+      <div class="loading-wrap">
+        <div class="loading-label">Loading world...</div>
+        <div class="loading-track">
+          <div class="loading-bar"></div>
+        </div>
+        <div id="loading-percent" class="loading-percent">0%</div>
+      </div>
+    </div>
+
+    <canvas id="c"></canvas>
+    <script type="module" src="./ladybug.js"></script>
+  </body>
+</html>

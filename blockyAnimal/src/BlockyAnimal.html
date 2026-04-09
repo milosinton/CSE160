@@ -1,0 +1,63 @@
+<!-- Milo Sinton
+ esinton@ucsc.edu
+ 1946290
+
+
+ Notes to graders:
+
+ - shift click to make the wings flap!
+ - only added joint control for one leg to demonstrate how it works
+ - click and drag on screen to turn it!
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Blocky Animal 3D</title>
+  </head>
+
+  <body onload="main()">
+    <h1>dragonfly!</h1>
+    
+    <canvas id="webgl" width="400" height="400">
+      Please use a browser that supports "canvas"
+    </canvas>
+    
+    <div>
+      <p>
+      <div id="performance">Performance info</div>
+      <p>
+      make him dance (animation):   
+      <button type="button" id="animationOnButton">ON</button>
+      <button type="button" id="animationOffButton">OFF</button>
+      <p>
+      Camera Angle X (Up/Down): <input type="range" min="-90" max="90" value="0" class="slider" id="angleSlideX">
+      <p>
+      Camera Angle Y (Side-to-Side): <input type="range" min="-180" max="180" value="0" class="slider" id="angleSlideY">
+      <p>
+      Leg Joint Controls
+      <button id="reset">reset</button>
+      <p>
+      hip <input type="range" min="-10" max="10" value="0" class="slider" id="hipSlide">
+      <p>
+      knee <input type="range" min="-10" max="10" value="0" class="slider" id="kneeSlide">
+      <p>
+      foot <input type="range" min="-10" max="10" value="0" class="slider" id="footSlide">
+      <p>
+    </div>
+
+    <!-- ===== Scripts ===== -->
+    <script src="../lib/cuon-matrix-cse160.js"></script>
+    <script src="../lib/cuon-utils.js"></script>
+    <script src="../lib/webgl-utils.js"></script>
+    <script src="../lib/webgl-debug.js"></script>
+    <script src="Dodecahedron.js"></script>
+    <script src="Cube.js"></script>
+    <script src="Circle.js"></script>
+    <script src="Triangle.js"></script>
+    <script src="Point.js"></script>
+    <script src="BlockyAnimal.js"></script>
+  </body>
+</html>
